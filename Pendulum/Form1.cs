@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Pendulum
 {
@@ -27,6 +28,24 @@ namespace Pendulum
         double rodLength, bobMass, angle;
         int step, stoptime;
         Pendulum.CoordinatePoint coordinatePoint;
+
+        delegate void UpdateChartCallback(Chart chrt, Pendulum.SimulationUpdatedEventArg e);
+
+        private void UpdateChart(Chart chrt, Pendulum.SimulationUpdatedEventArg e)
+        {
+            if (chrt.InvokeRequired)
+            {
+                UpdateChartCallback upd = new UpdateChartCallback(UpdateChart);
+                this.Invoke(upd, new object[] { chrt, e });
+            }
+            else
+            {
+                chrt.Series[0].Points.AddXY(e.Time, e.Value.x);
+                chrt.Series[1].Points.AddXY(e.Time, e.Value.y);
+                chrt.Series[2].Points.AddXY(e.Time, e.Value.z);
+
+            }
+        }
 
         private void btnClColor_Click(object sender, EventArgs e)
         {
@@ -149,14 +168,39 @@ namespace Pendulum
         private void Pdl_SimulationUpdated(object sender, Pendulum.SimulationUpdatedEventArg e)
         {
             // Update Charts
-            
+            switch (e.Parameter)
+            {
+                case Pendulum.SimulationParameters.AngularAcceleration:
+                    UpdateChart(chartAcc, e);
+                    break;
+                case Pendulum.SimulationParameters.AngularVelocity:
+                    UpdateChart(chartVelocity, e);
+                    break;
+                case Pendulum.SimulationParameters.AngularPosition:
+                    UpdateChart(chartPos, e);
+                    break;
+                default:
+                    break;
+            }
+
         //    throw new NotImplementedException();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            pdl.Simulate(gr, grV, grH, grA, pMain.Size, pVertical.Size, pHorizantal.Size, pAngle.Size, bgColor,angle, step, stoptime);
+            chartAcc.Series[0].Points.Clear();
+            chartAcc.Series[1].Points.Clear();
+            chartAcc.Series[2].Points.Clear();
 
+            chartVelocity.Series[0].Points.Clear();
+            chartVelocity.Series[1].Points.Clear();
+            chartVelocity.Series[2].Points.Clear();
+
+            chartPos.Series[0].Points.Clear();
+            chartPos.Series[1].Points.Clear();
+            chartPos.Series[2].Points.Clear();
+
+            pdl.Simulate(gr, grV, grH, grA, pMain.Size, pVertical.Size, pHorizantal.Size, pAngle.Size, bgColor,angle, step, stoptime);
 
         }
     }

@@ -429,7 +429,7 @@
             this.nudStop.Size = new System.Drawing.Size(61, 20);
             this.nudStop.TabIndex = 15;
             this.nudStop.Value = new decimal(new int[] {
-            10,
+            100,
             0,
             0,
             0});

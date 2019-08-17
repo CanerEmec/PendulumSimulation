@@ -29,6 +29,7 @@ namespace Pendulum
         {
             public SimulationParameters Parameter;
             public Vector3 Value;
+            public double Time;
         }
 
         public event EventHandler<SimulationUpdatedEventArg> SimulationUpdated;
@@ -160,6 +161,7 @@ namespace Pendulum
 
         public async void Simulate(Graphics grMain, Graphics grVertical, Graphics grHorizantal, Graphics grAngle, Size sMain, Size sVertical, Size sHorizantal, Size sAngle, Color bgColor, double angle_, int step, int time)
         {
+            simParameters = new SimParameters();
             simParameters.Time = 0;
             simParameters.dT = (step/1000.0);
             simParameters.StopTime = time;
@@ -182,11 +184,6 @@ namespace Pendulum
 
                     DrawAll(grMain, grVertical, grHorizantal, grAngle, sMain, sVertical, sHorizantal, sAngle, simParameters.AngularPosition.x, bgColor);
 
-                    SimulationUpdatedEventArg arg = new SimulationUpdatedEventArg();
-                    arg.Parameter = SimulationParameters.Time;
-                    arg.Value = new Vector3() { x = simParameters.Time };
-
-                    SimulationUpdated?.Invoke(this, arg);
                 }
             });
         }
@@ -235,6 +232,8 @@ namespace Pendulum
             SimulationUpdatedEventArg arg = new SimulationUpdatedEventArg();
             arg.Parameter = SimulationParameters.AngularAcceleration;
             arg.Value = simParameters.AngularAcc;
+            arg.Time = simParameters.Time;
+
 
             SimulationUpdated?.Invoke(this, arg);
         }
@@ -248,6 +247,7 @@ namespace Pendulum
             SimulationUpdatedEventArg arg = new SimulationUpdatedEventArg();
             arg.Parameter = SimulationParameters.AngularVelocity;
             arg.Value = simParameters.AngularVelocity;
+            arg.Time = simParameters.Time;
 
             SimulationUpdated?.Invoke(this, arg);
         }
@@ -258,9 +258,16 @@ namespace Pendulum
             simParameters.AngularPosition.y += simParameters.AngularVelocity.y * simParameters.dT + 0.5 * simParameters.AngularAcc.y * simParameters.dT * simParameters.dT;
             simParameters.AngularPosition.z += simParameters.AngularVelocity.z * simParameters.dT + 0.5 * simParameters.AngularAcc.z * simParameters.dT * simParameters.dT;
 
+            simParameters.AngularPosition.x %= 360;
+            simParameters.AngularPosition.y %= 360;
+            simParameters.AngularPosition.z %= 360;
+
+
             SimulationUpdatedEventArg arg = new SimulationUpdatedEventArg();
             arg.Parameter = SimulationParameters.AngularPosition;
             arg.Value = simParameters.AngularPosition;
+            arg.Time = simParameters.Time;
+
 
             SimulationUpdated?.Invoke(this, arg);
         }
