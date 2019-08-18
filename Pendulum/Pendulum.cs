@@ -49,6 +49,10 @@ namespace Pendulum
 
         public void ConstructPendulum(double angle, Graphics gr, Size size0)
         {
+            pointP.X = _pivot.Location.X + _pivot.Size_.Width / 2;
+            pointP.Y = Convert.ToInt32(_rod.Length) + _pivot.Size_.Height / 2;
+            Forces[0] = new Vector3(0, -9.81 * _bob.Mass, 0);
+
             InitScene(gr, pointP);
 
 
@@ -350,7 +354,7 @@ namespace Pendulum
             this.Mass = mass;
             _rectangle = new Rectangle();
             _rectangle.Size = size;
-            this._color = color;
+            this.Color_ = color;
         }
 
         public Bob(double mass, Point loc, Size size, Color color) : this(mass, size, color)
@@ -362,7 +366,7 @@ namespace Pendulum
 
         public double Mass { get; set; }    // kg
 
-        private Color _color;
+        public Color Color_;
         private Rectangle _rectangle;
         private Point _pointText;
 
@@ -399,7 +403,7 @@ namespace Pendulum
 
         public void Draw(Graphics gr, Point coordPoint, Size sizecontainer)
         {
-            Brush br = new SolidBrush(_color);
+            Brush br = new SolidBrush(Color_);
 
             gr.FillEllipse(br, _rectangle);
             gr.DrawEllipse(Pens.Black, _rectangle);
@@ -475,10 +479,10 @@ namespace Pendulum
         public Pivot(Point loc, Size size, Color color)
         {
             _rectangle = new Rectangle(loc, size);
-            this.color = color;
+            this.Color_ = color;
         }
 
-        private Color color;
+        public Color Color_;
 
         private Rectangle _rectangle;
 
@@ -510,7 +514,7 @@ namespace Pendulum
 
         public void Draw(Graphics gr)
         {
-            Brush br = new SolidBrush(color);
+            Brush br = new SolidBrush(Color_);
             
             gr.FillEllipse(br, _rectangle);
             gr.DrawEllipse(Pens.Black, _rectangle);

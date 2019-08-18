@@ -42,8 +42,7 @@ namespace Pendulum
             {
                 chrt.Series[0].Points.AddXY(e.Time, e.Value.x);
                 chrt.Series[1].Points.AddXY(e.Time, e.Value.y);
-                chrt.Series[2].Points.AddXY(e.Time, e.Value.z);
-
+                chrt.Series[2].Points.AddXY(e.Time, e.Value.z);                
             }
         }
 
@@ -183,10 +182,27 @@ namespace Pendulum
                     break;
             }
 
-        //    throw new NotImplementedException();
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            initCharts();
+
+            pvt.Size_ = pvtSize;
+            pvt.Color_ = pvtColor;
+
+            rod.Length = rodLength;
+
+            bob.Mass = bobMass;
+            bob.Size_ = bobSize;
+            bob.Color_ = bobColor;
+
+            pdl.Set_CoordPoint(coordinatePoint, new Point(0, 0));
+
+            pdl.Simulate(gr, grV, grH, grA, pMain.Size, pVertical.Size, pHorizantal.Size, pAngle.Size, bgColor,angle, step, stoptime);
+        }
+
+        private void initCharts()
         {
             chartAcc.Series[0].Points.Clear();
             chartAcc.Series[1].Points.Clear();
@@ -200,8 +216,29 @@ namespace Pendulum
             chartPos.Series[1].Points.Clear();
             chartPos.Series[2].Points.Clear();
 
-            pdl.Simulate(gr, grV, grH, grA, pMain.Size, pVertical.Size, pHorizantal.Size, pAngle.Size, bgColor,angle, step, stoptime);
+            chartAcc.ChartAreas[0].AxisX.Interval = (int)(stoptime / 25);
+            chartAcc.Series[0].BorderWidth = 2;
+            chartAcc.Series[1].BorderWidth = 2;
+            chartAcc.Series[2].BorderWidth = 2;
 
+            chartVelocity.ChartAreas[0].AxisX.Interval = (int)(stoptime / 25);
+            chartVelocity.Series[0].BorderWidth = 2;
+            chartVelocity.Series[1].BorderWidth = 2;
+            chartVelocity.Series[2].BorderWidth = 2;
+
+            chartPos.ChartAreas[0].AxisX.Interval = (int)(stoptime / 25);
+            chartPos.Series[0].BorderWidth = 2;
+            chartPos.Series[1].BorderWidth = 2;
+            chartPos.Series[2].BorderWidth = 2;
+
+            chartAcc.ChartAreas[0].AxisX.Minimum = 0;
+            chartAcc.ChartAreas[0].AxisX.Maximum = stoptime;
+
+            chartVelocity.ChartAreas[0].AxisX.Minimum = 0;
+            chartVelocity.ChartAreas[0].AxisX.Maximum = stoptime;
+
+            chartPos.ChartAreas[0].AxisX.Minimum = 0;
+            chartPos.ChartAreas[0].AxisX.Maximum = stoptime;
         }
     }
 }
